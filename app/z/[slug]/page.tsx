@@ -309,3 +309,83 @@ export default function ConfiguratorPage() {
               style={{ backgroundColor: '#1c1c21' }}
             >
               <p className="text-xs uppercase tracking-wide" style={{ color: '#a1a1aa' }}>
+                Szacunkowa wycena
+              </p>
+              <p className="text-xl font-bold text-accent-500 mt-1">
+                {price.min} zł – {price.max} zł
+              </p>
+              <p className="text-xs mt-1" style={{ color: '#71717a' }}>
+                Wartość orientacyjna. Ostateczną cenę potwierdza zakład po kontakcie.
+              </p>
+            </div>
+          )}
+
+          <input
+            type="text"
+            placeholder="Imię i nazwisko *"
+            value={contactName}
+            onChange={(e) => setContactName(e.target.value)}
+            className="w-full rounded-lg px-4 py-3 text-white border"
+            style={{ backgroundColor: '#1c1c21', borderColor: '#2a2a31' }}
+          />
+          <input
+            type="tel"
+            placeholder="Telefon *"
+            value={contactPhone}
+            onChange={(e) => setContactPhone(e.target.value)}
+            className="w-full rounded-lg px-4 py-3 text-white border"
+            style={{ backgroundColor: '#1c1c21', borderColor: '#2a2a31' }}
+          />
+          <input
+            type="email"
+            placeholder="E-mail (opcjonalnie)"
+            value={contactEmail}
+            onChange={(e) => setContactEmail(e.target.value)}
+            className="w-full rounded-lg px-4 py-3 text-white border"
+            style={{ backgroundColor: '#1c1c21', borderColor: '#2a2a31' }}
+          />
+          <textarea
+            placeholder="Uwagi (opcjonalnie)"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows={3}
+            className="w-full rounded-lg px-4 py-3 text-white border"
+            style={{ backgroundColor: '#1c1c21', borderColor: '#2a2a31' }}
+          />
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => setStep('style')}
+              className="flex-1 py-3 rounded-lg border"
+              style={{ borderColor: '#2a2a31', color: '#a1a1aa' }}
+            >
+              Wstecz
+            </button>
+            <button
+              disabled={!contactName || !contactPhone || submitting}
+              onClick={handleSubmit}
+              className="flex-1 bg-accent-500 disabled:opacity-40 text-white font-semibold py-3 rounded-lg"
+            >
+              {submitting ? 'Wysyłanie…' : 'Wyślij zapytanie'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {step === 'done' && (
+        <div className="text-center py-12 space-y-4">
+          <h2 className="text-2xl font-bold text-white">Dziękujemy!</h2>
+          <p style={{ color: '#a1a1aa' }}>
+            Twoje zapytanie trafiło do zakładu {workshop.name}. Skontaktujemy
+            się wkrótce, aby potwierdzić szczegóły i ostateczną wycenę.
+          </p>
+          {price && (
+            <p className="text-accent-500 font-semibold">
+              Orientacyjna wycena: {price.min}–{price.max} zł
+            </p>
+          )}
+        </div>
+      )}
+    </main>
+  );
+}
