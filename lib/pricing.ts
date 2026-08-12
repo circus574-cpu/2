@@ -49,4 +49,37 @@ export function calculatePrice(
 
   return {
     base: Math.round(base),
-    min: Math.round(base * 0.
+    min: Math.round(base * 0.85),
+    max: Math.round(base * 1.15),
+  };
+}
+
+export const MATERIAL_LABELS: Record<Material, string> = {
+  steel_black: 'Stal czarna',
+  steel_inox: 'Stal nierdzewna (inox)',
+  aluminum: 'Aluminium',
+};
+
+export const FINISH_LABELS: Record<string, string> = {
+  powder_coating: 'Malowanie proszkowe',
+  galvanized: 'Cynkowanie',
+  raw: 'Surowa',
+};
+
+export const STYLE_LABELS: Record<Style, string> = {
+  vertical_bars: 'Pręty pionowe',
+  glass: 'Szkło',
+  cable: 'Linki stalowe',
+};
+
+export const PROFILE_LABELS: Record<ProfileShape, string> = {
+  square: 'Profil kwadratowy',
+  rectangular: 'Profil prostokątny',
+};
+
+export const STATUS_LABELS: Record<string, string> = {
+  new: 'Nowe',
+  contacted: 'W kontakcie',
+  accepted: 'Zaakceptowane',
+  rejected: 'Odrzucone',
+};
