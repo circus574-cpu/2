@@ -7,11 +7,14 @@ import {
   Workshop,
   ConfiguratorRequest,
   RequestStatus,
+  ProfileSize,
 } from '@/lib/supabase';
 import {
   MATERIAL_LABELS,
   FINISH_LABELS,
   STYLE_LABELS,
+  PROFILE_LABELS,
+  PROFILE_SIZES,
   STATUS_LABELS,
 } from '@/lib/pricing';
 
@@ -37,6 +40,7 @@ export default function AdminPage() {
   const [priceAluminum, setPriceAluminum] = useState('');
   const [laborPrice, setLaborPrice] = useState('');
   const [margin, setMargin] = useState('');
+  const [profileMultipliers, setProfileMultipliers] = useState<Record<string, string>>({});
 
   async function loadData() {
     const { data: ws } = await supabase
@@ -52,6 +56,12 @@ export default function AdminPage() {
       setPriceAluminum(String(ws.price_aluminum));
       setLaborPrice(String(ws.labor_price_per_mb));
       setMargin(String(ws.margin_percent));
+
+      const multipliers: Record<string, string> = {};
+      PROFILE_SIZES.forEach((p) => {
+        multipliers[p] = String(ws.profile_multipliers?.[p] ?? 1);
+      });
+      setProfileMultipliers(multipliers);
 
       const { data: reqs } = await supabase
         .from('configurator_requests')
@@ -78,6 +88,12 @@ export default function AdminPage() {
 
   async function saveSettings() {
     if (!workshop) return;
+
+    const newMultipliers: Record<string, number> = {};
+    PROFILE_SIZES.forEach((p) => {
+      newMultipliers[p] = parseFloat(profileMultipliers[p]) || 1;
+    });
+
     await supabase
       .from('workshops')
       .update({
@@ -86,6 +102,7 @@ export default function AdminPage() {
         price_aluminum: parseFloat(priceAluminum),
         labor_price_per_mb: parseFloat(laborPrice),
         margin_percent: parseFloat(margin),
+        profile_multipliers: newMultipliers,
       })
       .eq('id', workshop.id);
 
@@ -178,7 +195,7 @@ export default function AdminPage() {
                 <p>
                   {r.length_mb} mb × {r.height_cm} cm —{' '}
                   {MATERIAL_LABELS[r.material]}, {FINISH_LABELS[r.finish]},{' '}
-                  {STYLE_LABELS[r.style]}, {r.profile_shape === 'square' ? 'profil kwadratowy' : 'profil prostokątny'}
+                  {STYLE_LABELS[r.style]}, {PROFILE_LABELS[r.profile_shape as ProfileSize] || r.profile_shape}
                 </p>
                 {r.estimated_price_min && (
                   <p className="ember-text font-display font-semibold">
@@ -214,7 +231,7 @@ export default function AdminPage() {
           style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}` }}
         >
           <h2 className="font-display text-lg font-semibold" style={{ color: '#f0e4d8' }}>
-            Stawki cennika
+            Stawki materiałowe
           </h2>
 
           <div>
@@ -278,20 +295,23 @@ export default function AdminPage() {
             />
           </div>
 
-          <button
-            onClick={saveSettings}
-            className="ember-btn w-full font-display font-semibold py-3 rounded-lg"
-            style={{ color: '#161412' }}
-          >
-            Zapisz zmiany
-          </button>
-          {savedMsg && (
-            <p className="text-center text-sm" style={{ color: '#22c55e' }}>
-              Zapisano ✓
-            </p>
-          )}
-        </div>
-      )}
-    </main>
-  );
-}
+          <h2 className="font-display text-lg font-semibold pt-3" style={{ color: '#f0e4d8', borderTop: `1px solid ${CARD_BORDER}` }}>
+            Mnożniki cenowe wg rozmiaru profilu
+          </h2>
+          <p className="text-xs" style={{ color: TEXT_FAINT }}>
+            1.0 = cena bazowa. Większy profil = więcej materiału = wyższy mnożnik.
+          </p>
+
+          {PROFILE_SIZES.map((p) => (
+            <div key={p} className="flex items-center justify-between gap-3">
+              <label className="text-sm flex-1" style={{ color: TEXT_MUTED }}>
+                {PROFILE_LABELS[p]}
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                value={profileMultipliers[p] ?? ''}
+                onChange={(e) =>
+                  setProfileMultipliers((prev) => ({ ...prev, [p]: e.target.value }))
+                }
+                className="font-mono-tech w-24
