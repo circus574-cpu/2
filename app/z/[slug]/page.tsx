@@ -2,13 +2,14 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'next/navigation';
-import { supabase, Workshop, Material, Finish, Style, ProfileShape } from '@/lib/supabase';
+import { supabase, Workshop, Material, Finish, Style, ProfileSize } from '@/lib/supabase';
 import {
   calculatePrice,
   MATERIAL_LABELS,
   FINISH_LABELS,
   STYLE_LABELS,
   PROFILE_LABELS,
+  PROFILE_SIZES,
 } from '@/lib/pricing';
 
 type Step = 'dimensions' | 'material' | 'profile' | 'finish' | 'style' | 'contact' | 'done';
@@ -34,7 +35,7 @@ export default function ConfiguratorPage() {
   const [lengthMb, setLengthMb] = useState('');
   const [heightCm, setHeightCm] = useState('');
   const [material, setMaterial] = useState<Material | null>(null);
-  const [profileShape, setProfileShape] = useState<ProfileShape | null>(null);
+  const [profileSize, setProfileSize] = useState<ProfileSize | null>(null);
   const [finish, setFinish] = useState<Finish | null>(null);
   const [style, setStyle] = useState<Style | null>(null);
   const [contactName, setContactName] = useState('');
@@ -61,14 +62,14 @@ export default function ConfiguratorPage() {
   }, [slug]);
 
   const price = useMemo(() => {
-    if (!workshop || !lengthMb || !material || !style || !profileShape) return null;
+    if (!workshop || !lengthMb || !material || !style || !profileSize) return null;
     const len = parseFloat(lengthMb);
     if (isNaN(len) || len <= 0) return null;
-    return calculatePrice(workshop, len, material, style, profileShape);
-  }, [workshop, lengthMb, material, style, profileShape]);
+    return calculatePrice(workshop, len, material, style, profileSize);
+  }, [workshop, lengthMb, material, style, profileSize]);
 
   async function handleSubmit() {
-    if (!workshop || !price || !profileShape) return;
+    if (!workshop || !price || !profileSize) return;
     setSubmitting(true);
 
     const { error } = await supabase.from('configurator_requests').insert({
@@ -78,7 +79,7 @@ export default function ConfiguratorPage() {
       material,
       finish,
       style,
-      profile_shape: profileShape,
+      profile_shape: profileSize,
       estimated_price_min: price.min,
       estimated_price_max: price.max,
       contact_name: contactName,
@@ -245,21 +246,23 @@ export default function ConfiguratorPage() {
 
       {step === 'profile' && (
         <div className="space-y-5">
-          <h2 className="font-display text-lg font-semibold" style={{ color: '#f0e4d8' }}>Profil</h2>
-          {(Object.keys(PROFILE_LABELS) as ProfileShape[]).map((p) => (
-            <button
-              key={p}
-              onClick={() => setProfileShape(p)}
-              className="w-full text-left rounded-lg px-4 py-3 font-display"
-              style={{
-                backgroundColor: profileShape === p ? EMBER : CARD_BG,
-                border: `1px solid ${profileShape === p ? EMBER : CARD_BORDER}`,
-                color: profileShape === p ? '#161412' : '#f0e4d8',
-              }}
-            >
-              {PROFILE_LABELS[p]}
-            </button>
-          ))}
+          <h2 className="font-display text-lg font-semibold" style={{ color: '#f0e4d8' }}>Rozmiar profilu</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {PROFILE_SIZES.map((p) => (
+              <button
+                key={p}
+                onClick={() => setProfileSize(p)}
+                className="text-center rounded-lg px-3 py-4 font-display"
+                style={{
+                  backgroundColor: profileSize === p ? EMBER : CARD_BG,
+                  border: `1px solid ${profileSize === p ? EMBER : CARD_BORDER}`,
+                  color: profileSize === p ? '#161412' : '#f0e4d8',
+                }}
+              >
+                {PROFILE_LABELS[p]}
+              </button>
+            ))}
+          </div>
           <div className="flex gap-3">
             <button
               onClick={() => setStep('material')}
@@ -269,7 +272,7 @@ export default function ConfiguratorPage() {
               Wstecz
             </button>
             <button
-              disabled={!profileShape}
+              disabled={!profileSize}
               onClick={() => setStep('finish')}
               className="ember-btn flex-1 disabled:opacity-30 font-display font-semibold py-3 rounded-lg"
               style={{ color: '#161412' }}
@@ -453,4 +456,4 @@ export default function ConfiguratorPage() {
       )}
     </main>
   );
-} 
+}
