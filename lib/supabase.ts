@@ -5,6 +5,8 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+export type ProfileSize = '20x20' | '25x25' | '30x30' | '40x40' | '40x20' | '50x30' | '50x50';
+
 export type Workshop = {
   id: string;
   name: string;
@@ -16,12 +18,12 @@ export type Workshop = {
   price_aluminum: number;
   labor_price_per_mb: number;
   margin_percent: number;
+  profile_multipliers: Record<ProfileSize, number>;
 };
 
 export type Material = 'steel_black' | 'steel_inox' | 'aluminum';
 export type Finish = 'powder_coating' | 'galvanized' | 'raw';
 export type Style = 'vertical_bars' | 'glass' | 'cable';
-export type ProfileSize = '20x20' | '25x25' | '30x30' | '40x40' | '40x20' | '50x30' | '50x50';
 export type RequestStatus = 'new' | 'contacted' | 'accepted' | 'rejected';
 
 export type ConfiguratorRequest = {
