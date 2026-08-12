@@ -1,4 +1,4 @@
-import { Workshop, Material, Style, ProfileShape } from './supabase';
+import { Workshop, Material, Style, ProfileSize } from './supabase';
 
 const WEIGHT_PER_MB: Record<Material, number> = {
   steel_black: 8,
@@ -12,9 +12,24 @@ const STYLE_MULTIPLIER: Record<Style, number> = {
   cable: 1.15,
 };
 
-const PROFILE_MULTIPLIER: Record<ProfileShape, number> = {
-  square: 1,
-  rectangular: 1.08,
+export const PROFILE_SIZES: ProfileSize[] = [
+  '20x20',
+  '25x25',
+  '30x30',
+  '40x40',
+  '40x20',
+  '50x30',
+  '50x50',
+];
+
+export const PROFILE_LABELS: Record<ProfileSize, string> = {
+  '20x20': 'Profil 20×20 mm',
+  '25x25': 'Profil 25×25 mm',
+  '30x30': 'Profil 30×30 mm',
+  '40x40': 'Profil 40×40 mm',
+  '40x20': 'Profil 40×20 mm',
+  '50x30': 'Profil 50×30 mm',
+  '50x50': 'Profil 50×50 mm',
 };
 
 export function pricePerKg(workshop: Workshop, material: Material): number {
@@ -33,12 +48,12 @@ export function calculatePrice(
   lengthMb: number,
   material: Material,
   style: Style,
-  profileShape: ProfileShape
+  profileSize: ProfileSize
 ): { min: number; max: number; base: number } {
   const weight = WEIGHT_PER_MB[material];
   const pricePerKgValue = pricePerKg(workshop, material);
   const styleMultiplier = STYLE_MULTIPLIER[style];
-  const profileMultiplier = PROFILE_MULTIPLIER[profileShape];
+  const profileMultiplier = workshop.profile_multipliers?.[profileSize] ?? 1;
 
   const base =
     (weight * pricePerKgValue + workshop.labor_price_per_mb) *
@@ -70,11 +85,6 @@ export const STYLE_LABELS: Record<Style, string> = {
   vertical_bars: 'Pręty pionowe',
   glass: 'Szkło',
   cable: 'Linki stalowe',
-};
-
-export const PROFILE_LABELS: Record<ProfileShape, string> = {
-  square: 'Profil kwadratowy',
-  rectangular: 'Profil prostokątny',
 };
 
 export const STATUS_LABELS: Record<string, string> = {
