@@ -40,4 +40,18 @@ export default function HomePage() {
 
         <div className="pt-2">
           <Link
-            hr
+            href="/z/zaklad-testowy"
+            className="ember-btn inline-block text-forge-950 font-display font-semibold px-8 py-3 rounded-lg"
+            style={{ color: '#161412' }}
+          >
+            Zobacz przykładowy konfigurator →
+          </Link>
+        </div>
+
+        <p className="font-mono-tech text-xs pt-8" style={{ color: '#8a8178' }}>
+          Panel dla właściciela zakładu: /admin/zaklad-testowy
+        </p>
+      </div>
+    </main>
+  );
+}
