@@ -21,7 +21,7 @@ export type Workshop = {
 export type Material = 'steel_black' | 'steel_inox' | 'aluminum';
 export type Finish = 'powder_coating' | 'galvanized' | 'raw';
 export type Style = 'vertical_bars' | 'glass' | 'cable';
-export type ProfileShape = 'square' | 'rectangular';
+export type ProfileSize = '20x20' | '25x25' | '30x30' | '40x40' | '40x20' | '50x30' | '50x50';
 export type RequestStatus = 'new' | 'contacted' | 'accepted' | 'rejected';
 
 export type ConfiguratorRequest = {
@@ -32,7 +32,7 @@ export type ConfiguratorRequest = {
   material: Material;
   finish: Finish;
   style: Style;
-  profile_shape: ProfileShape;
+  profile_shape: ProfileSize;
   estimated_price_min: number | null;
   estimated_price_max: number | null;
   contact_name: string | null;
