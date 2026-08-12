@@ -314,4 +314,26 @@ export default function AdminPage() {
                 onChange={(e) =>
                   setProfileMultipliers((prev) => ({ ...prev, [p]: e.target.value }))
                 }
-                className="font-mono-tech w-24
+                className="font-mono-tech w-24 rounded-lg px-3 py-2 text-right"
+                style={{ backgroundColor: INPUT_BG, border: `1px solid ${CARD_BORDER}`, color: '#f0e4d8' }}
+              />
+            </div>
+          ))}
+
+          <button
+            onClick={saveSettings}
+            className="ember-btn w-full font-display font-semibold py-3 rounded-lg mt-2"
+            style={{ color: '#161412' }}
+          >
+            Zapisz zmiany
+          </button>
+          {savedMsg && (
+            <p className="text-center text-sm" style={{ color: '#22c55e' }}>
+              Zapisano ✓
+            </p>
+          )}
+        </div>
+      )}
+    </main>
+  );
+}
